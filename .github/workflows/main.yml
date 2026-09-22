@@ -1,0 +1,30 @@
+name: autograding
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  autograding:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Student Code
+        uses: actions/checkout@v4
+
+      - name: Check answers.sql
+        run: |
+          if [ ! -f answers.sql ]; then
+            echo "ERROR: answers.sql not found."
+            echo "Please submit your PL/SQL program as answers.sql"
+            exit 1
+          fi
+
+      - name: Validate PL/SQL Content
+        run: |
+          echo "Validating answers.sql content..."
+          grep -i "DECLARE" answers.sql || (echo "ERROR: Missing DECLARE keyword in answers.sql" && exit 1)
+          grep -i "DBMS_OUTPUT" answers.sql || (echo "ERROR: Missing DBMS_OUTPUT statement in answers.sql" && exit 1)
+         
